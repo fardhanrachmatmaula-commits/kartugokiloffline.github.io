@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartu Gokil GenRe Lingga - 8-Bit Retro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #020617;
+            color: white;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .wheel-transition {
+            transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+
+        .card-enter {
+            animation: slideUp 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .mood-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #60a5fa;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .ai-glow-blue { box-shadow: 0 0 30px rgba(37, 99, 235, 0.3); }
+        .ai-glow-red { box-shadow: 0 0 30px rgba(220, 38, 38, 0.3); }
+        
+        .logo-badge {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 900;
+            color: #0f172a;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #334155;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.1s;
+        }
+        
+        .music-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Efek Background -->
+    <div class="fixed inset-0 pointer-events-none opacity-20">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-900 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-red-900 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Tombol Musik -->
+    <button onclick="toggleMusic()" class="music-btn" id="music-toggle">
+        <i id="music-icon" class="fas fa-volume-mute text-white"></i>
+    </button>
+
+    <div id="lobby" class="relative z-10 flex flex-col items-center w-full max-w-lg text-center">
+        <div class="mb-4">
+            <div class="inline-block bg-yellow-500 text-black px-3 py-1 rounded font-black text-[10px] mb-2 uppercase tracking-widest">
+                8-BIT RETRO EDITION
+            </div>
+            <h1 class="text-5xl font-extrabold italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-blue-400 via-white to-red-500 leading-tight">
+                KARTU GOKIL GenRe
+            </h1>
+            <p class="text-blue-400 font-bold tracking-widest text-[10px] mt-1">LINGGA - KEPULAUAN RIAU</p>
+        </div>
+
+        <!-- Topik GenRe -->
+        <div class="grid grid-cols-3 gap-2 mb-8 w-full bg-slate-900/60 p-2 rounded-2xl border border-white/5 backdrop-blur-md">
+            <button onclick="setTopic('Triad KRR')" id="btn-triad" class="mood-btn active px-2 py-2 rounded-xl text-[8px] font-black transition-all">TRIAD KRR</button>
+            <button onclick="setTopic('Stunting')" id="btn-stunting" class="mood-btn px-2 py-2 rounded-xl text-[8px] font-black transition-all text-slate-500">STUNTING</button>
+            <button onclick="setTopic('Kespro')" id="btn-kespro" class="mood-btn px-2 py-2 rounded-xl text-[8px] font-black transition-all text-slate-500">KESPRO</button>
+            <button onclick="setTopic('Life Skills')" id="btn-life" class="mood-btn px-2 py-2 rounded-xl text-[8px] font-black transition-all text-slate-500">LIFE SKILLS</button>
+            <button onclick="setTopic('Pernikahan')" id="btn-pernikahan" class="mood-btn px-2 py-2 rounded-xl text-[8px] font-black transition-all text-slate-500">PRE-NIKAH</button>
+            <button onclick="setTopic('Studi Kasus')" id="btn-kasus" class="mood-btn px-2 py-2 rounded-xl text-[8px] font-black transition-all text-slate-500">STUDI KASUS</button>
+        </div>
+
+        <!-- Roda -->
+        <div class="relative w-72 h-72 mb-8">
+            <div class="absolute -top-6 left-1/2 -translate-x-1/2 z-40">
+                <svg width="40" height="40" viewBox="0 0 40 40"><path d="M20 40 L40 0 L0 0 Z" fill="white" /></svg>
+            </div>
+            <div id="wheel" class="w-full h-full rounded-full border-[8px] border-slate-800 shadow-2xl overflow-hidden wheel-transition relative">
+                <div class="absolute inset-0 bg-blue-600" style="clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%);"><span class="absolute top-[20%] right-[15%] font-black text-xl italic rotate-45 text-white">TRUTH</span></div>
+                <div class="absolute inset-0 bg-red-600" style="clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);"><span class="absolute bottom-[20%] right-[15%] font-black text-xl italic rotate-[135deg] text-white">DARE</span></div>
+                <div class="absolute inset-0 bg-blue-600" style="clip-path: polygon(50% 50%, 50% 100%, 0% 100%, 0% 50%);"><span class="absolute bottom-[20%] left-[15%] font-black text-xl italic rotate-[225deg] text-white">TRUTH</span></div>
+                <div class="absolute inset-0 bg-red-600" style="clip-path: polygon(50% 50%, 0% 50%, 0% 0%, 50% 0%);"><span class="absolute top-[20%] left-[15%] font-black text-xl italic rotate-[315deg] text-white">DARE</span></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full border-4 border-slate-900 z-20"></div>
+            </div>
+        </div>
+
+        <button id="spin-btn" onclick="handleSpin()" class="w-full py-5 bg-white text-slate-950 rounded-2xl font-black text-xl uppercase tracking-tighter shadow-[0_6px_0_#94a3b8] active:translate-y-1 active:shadow-none transition-all">PUTAR RODA!</button>
+    </div>
+
+    <!-- Modal Kartu -->
+    <div id="result-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl">
+        <div id="main-card" class="card-enter relative w-full max-w-[400px] min-h-[550px] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border-4 border-white">
+            <div id="card-overlay" class="absolute inset-0 -z-10 opacity-40"></div>
+            <div class="p-8 flex-1 flex flex-col">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="logo-badge flex items-center gap-1"><i class="fas fa-hand-paper text-orange-500"></i> SALAM GENRE!</div>
+                    <div class="logo-badge flex items-center gap-1"><i class="fas fa-map-marker-alt text-blue-600"></i> GENRE LINGGA</div>
+                </div>
+                <div class="text-center mb-6">
+                    <h2 id="result-title" class="text-6xl font-black text-white italic uppercase leading-none"></h2>
+                    <p id="topic-label" class="text-[10px] font-black text-white/60 tracking-[0.3em] uppercase mt-2"></p>
+                </div>
+                <div class="flex-1 bg-white rounded-[1.5rem] p-8 flex flex-col items-center justify-center text-center shadow-inner relative">
+                    <p id="challenge-text" class="text-lg font-extrabold text-slate-800 leading-tight"></p>
+                </div>
+            </div>
+            <div class="p-8 pt-0">
+                <button onclick="closeModal()" class="w-full py-4 bg-white text-slate-900 font-black rounded-xl text-sm shadow-[0_4px_0_#94a3b8]">KEMBALI</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- MESIN MUSIK 8-BIT OFFLINE ---
+        let audioCtx = null;
+        let isMusicPlaying = false;
+        let musicLoop = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function play8BitNote(freq, startTime, duration, volume, type = 'square') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(volume, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        function startBGM() {
+            initAudio();
+            if (isMusicPlaying) return;
+            isMusicPlaying = true;
+            const tempo = 130;
+            const beat = 60 / tempo;
+            function loop() {
+                const now = audioCtx.currentTime;
+                const mel = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25]; 
+                mel.forEach((f, i) => {
+                    play8BitNote(f, now + (i * beat * 0.5), 0.2, 0.03, 'square');
+                    if(i % 2 === 0) play8BitNote(f/2, now + (i * beat * 0.5), 0.2, 0.02, 'triangle');
+                });
+            }
+            loop();
+            musicLoop = setInterval(loop, beat * 3 * 1000);
+        }
+
+        function stopBGM() {
+            isMusicPlaying = false;
+            clearInterval(musicLoop);
+        }
+
+        function toggleMusic() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicPlaying) {
+                stopBGM();
+                icon.className = "fas fa-volume-mute text-white";
+            } else {
+                startBGM();
+                icon.className = "fas fa-volume-up text-yellow-400";
+            }
+        }
+
+        function playSpinSfx() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            for(let i=0; i<15; i++) {
+                play8BitNote(200 + (i*80), now + (i*0.08), 0.1, 0.02, 'sawtooth');
+            }
+        }
+
+        // --- DATABASE LOKAL ---
+        const localBank = {
+            'Triad KRR': {
+                truth: ["Apa alasan remaja mencoba merokok?", "Pernahkah kamu merasa tertekan oleh ajakan teman?", "Jika temanmu memakai narkoba, apa tindakanmu?"],
+                dare: ["Sebutkan 3 dampak HIV/AIDS dalam 10 detik!", "Peragakan cara menolak tawaran rokok!", "Buat slogan anti narkoba gaya rapper!"]
+            },
+            'Stunting': {
+                truth: ["Apakah kamu rutin sarapan pagi? Apa menunya?", "Apakah stunting hanya masalah tinggi badan?", "Apa itu tablet tambah darah bagi remaja putri?"],
+                dare: ["Sebutkan 5 protein hewani cegah stunting!", "Jelaskan konsep 'Isi Piringku'!", "Olahraga kecil 15 detik untuk hidup sehat!"]
+            },
+            'Kespro': {
+                truth: ["Seberapa sering kamu membersihkan organ reproduksi?", "Berani konsultasi ke dokter jika ada masalah?", "Pernah dengar mitos kespro yang salah?"],
+                dare: ["Sebutkan 3 cara menjaga kebersihan reproduksi!", "Jelaskan bahaya seks bebas!", "Tunjukkan ekspresi menolak pelecehan!"]
+            },
+            'Life Skills': {
+                truth: ["Apa keputusan tersulit yang pernah kamu ambil?", "Siapa role model inspirasimu?", "Cara kamu mengelola amarah saat emosi?"],
+                dare: ["Praktikkan bicara sopan menolak orang tua!", "Sebutkan 3 kelebihan dirimu!", "Ceritakan mimpi besarmu dalam 15 detik!"]
+            },
+            'Pernikahan': {
+                truth: ["Berapa usia ideal menikah menurutmu?", "Apa persiapan penting sebelum berumah tangga?", "Setuju dengan pernikahan di bawah 20 tahun?"],
+                dare: ["Sebutkan 3 risiko hamil di usia muda!", "Jelaskan pentingnya perencanaan keluarga!", "Sebutkan 4 fungsi keluarga!"]
+            },
+            'Studi Kasus': {
+                truth: ["Kasus: Teman ingin nikah muda karena bosan sekolah.", "Kasus: Teman dibully karena fisiknya pendek.", "Kasus: Ditawari vape gratis oleh kakak kelas."],
+                dare: ["Solusi untuk remaja kecanduan game hingga lupa makan!", "Simulasi menolong teman galau putus cinta!", "3 langkah bantu teman yang menjauh dari pergaulan!"]
+            }
+        };
+
+        let currentRotation = 0;
+        let selectedTopic = 'Triad KRR';
+        let isSpinning = false;
+
+        function setTopic(topic) {
+            selectedTopic = topic;
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+            const btnMap = {'Triad KRR':'btn-triad','Stunting':'btn-stunting','Kespro':'btn-kespro','Life Skills':'btn-life','Pernikahan':'btn-pernikahan','Studi Kasus':'btn-kasus'};
+            document.getElementById(btnMap[topic]).classList.add('active');
+        }
+
+        function handleSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            initAudio();
+            playSpinSfx();
+            const wheel = document.getElementById('wheel');
+            const btn = document.getElementById('spin-btn');
+            btn.innerText = "PROSES...";
+            const extra = 1440 + Math.floor(Math.random() * 360);
+            currentRotation += extra;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+            setTimeout(() => {
+                const normalized = (360 - (currentRotation % 360)) % 360;
+                const type = ((normalized >= 0 && normalized < 90) || (normalized >= 180 && normalized < 270)) ? 'truth' : 'dare';
+                showResult(type);
+                btn.innerText = "PUTAR RODA!";
+                isSpinning = false;
+            }, 4000);
+        }
+
+        function showResult(type) {
+            const modal = document.getElementById('result-modal');
+            const title = document.getElementById('result-title');
+            const card = document.getElementById('main-card');
+            const text = document.getElementById('challenge-text');
+            const overlay = document.getElementById('card-overlay');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            title.innerText = type.toUpperCase();
+            document.getElementById('topic-label').innerText = selectedTopic;
+            if (type === 'truth') {
+                card.className = "card-enter relative w-full max-w-[400px] min-h-[550px] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border-4 border-blue-500 bg-slate-950 ai-glow-blue";
+                overlay.style.background = "radial-gradient(circle at top right, #2563eb, transparent)";
+            } else {
+                card.className = "card-enter relative w-full max-w-[400px] min-h-[550px] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border-4 border-red-500 bg-slate-950 ai-glow-red";
+                overlay.style.background = "radial-gradient(circle at top right, #dc2626, transparent)";
+            }
+            const list = localBank[selectedTopic][type];
+            text.innerText = list[Math.floor(Math.random() * list.length)];
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
